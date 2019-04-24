@@ -1,0 +1,17 @@
+{
+  "name": "uscript",
+  "version": "0.1.0",
+  "description": "Micro Scripting Language inside JavaScript",
+  "main": "index.js",
+  "repository": "git@github.com:mdbarr/uscript",
+  "author": "Mark Barr <mark@hyperingenuity.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "jest": "^24.7.1"
+  },
+  "scripts": {
+    "lint": "eslint index.js test/*.js",
+    "test": "jest"
+  }
+}
