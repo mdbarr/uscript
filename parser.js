@@ -26,6 +26,9 @@ function Parser(grammar, base, options = {}) {
 
       for (const acceptor of acceptors) {
         const items = acceptor.split(/\s+/).map((x) => { return x.trim(); });
+        if (self.tokens.length < items.length - 1) {
+          continue;
+        }
 
         console.log('state', state);
 
@@ -84,7 +87,8 @@ Parser.prototype.next = function() {
 };
 
 Parser.prototype.accept = function(type) {
-  if (this.current && this.current.type === type) {
+  if (this.current && (this.current.type === type ||
+                       this.current.value === type)) {
     this.next();
     return true;
   }

@@ -10,7 +10,7 @@ describe('Parser Test', () => {
   it('should create a new parser instance', () => {
     parser = new Parser({
       Statement: 'AssignmentExpression | Expression | SYMBOL | Value',
-      Expression: 'Value OPERATOR Value | Value',
+      Expression: 'Value OPERATOR Expression | Value OPERATOR Value | Value',
       AssignmentExpression: 'SYMBOL ASSIGNMENT Expression',
       Value: 'Number | Boolean',
       Number: 'INTEGER | FLOAT',
@@ -34,6 +34,12 @@ describe('Parser Test', () => {
     }, {
       type: 'INTEGER',
       value: 20
+    }, {
+      type: 'OPERATOR',
+      value: '-'
+    }, {
+      type: 'INTEGER',
+      value: 30
     } ]);
 
     console.pp(tree);
