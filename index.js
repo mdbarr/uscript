@@ -3,21 +3,10 @@
 
 const Lexer = require('./lexer');
 const Parser = require('./parser');
-
-Object.defineProperty(String.prototype, 'µ', {
-  value() {
-    return 'µscript';
-  },
-  enumerable: false,
-  configurable: true
-});
-
-const λ = function() {
-  return 'µscript';
-};
+const Uscript = require('./uscript');
 
 module.exports = {
   Lexer,
   Parser,
-  λ
+  Uscript
 };

@@ -8,7 +8,9 @@ module.exports = {
     'jest': true,
     'node': true
   },
-  'globals': {},
+  'globals': {
+    λ: true
+  },
   'rules': {
     'accessor-pairs': 'error',
     'array-bracket-spacing': [ 'error', 'always' ],
