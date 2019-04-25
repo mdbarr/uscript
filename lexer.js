@@ -2,18 +2,29 @@
 'use strict';
 
 function Lexer(rules, { ignoreWhitespace = true } = {}) {
-  const keys = [];
-  const patterns = [];
-  for (const name in rules) {
-    const pattern = `(${ rules[name].source })`;
-    keys.push(name);
-    patterns.push(pattern);
+  this.keys = [];
+  this.patterns = [];
+  this.transforms = [];
+
+  if (Array.isArray(rules)) {
+    for (const item of rules) {
+      const pattern = `(${ item.pattern.source })`;
+      this.keys.push(item.type || item.name);
+      this.patterns.push(pattern);
+      this.transforms.push(item.transform);
+    }
+  } else {
+    for (const name in rules) {
+      const pattern = `(${ rules[name].source })`;
+      this.keys.push(name);
+      this.patterns.push(pattern);
+      this.transforms.push(null);
+    }
   }
 
   this.buffer = '';
-  this.keys = keys;
 
-  this.regexp = new RegExp(patterns.join('|'), 'g');
+  this.regexp = new RegExp(this.patterns.join('|'), 'g');
   this.regexp.lastIndex = 0;
 
   this.whitespace = ignoreWhitespace ? /\S/g : null;
@@ -45,9 +56,14 @@ Lexer.prototype.token = function() {
   } else {
     for (let i = 0; i < this.keys.length; i++) {
       if (result[i + 1] !== undefined) {
+        let value = result[0];
+        if (this.transforms[i]) {
+          value = this.transforms[i](value);
+        }
+
         return {
           type: this.keys[i],
-          value: result[0],
+          value,
           position: result.index
         };
       }

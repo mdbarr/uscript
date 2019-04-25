@@ -12,7 +12,7 @@ describe('Parser Test', () => {
       Statement: 'AssignmentExpression | Expression | SYMBOL | Value',
       Expression: 'Value OPERATOR Expression | Value OPERATOR Value | Value',
       AssignmentExpression: 'SYMBOL ASSIGNMENT Expression',
-      Value: 'Number | Boolean',
+      Value: 'Number | Boolean | STRING',
       Number: 'INTEGER | FLOAT',
       Boolean: 'TRUE | FALSE'
     }, 'Statement');
