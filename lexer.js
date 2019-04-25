@@ -57,7 +57,7 @@ Lexer.prototype.token = function() {
   }
 };
 
-Lexer.prototype.parse = function(input) {
+Lexer.prototype.tokenize = function(input) {
   this.input(input);
 
   const tokens = [];

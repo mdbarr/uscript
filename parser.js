@@ -22,6 +22,7 @@ function Parser(grammar, base, options = {}) {
       console.log(type, acceptors);
 
       const state = self.tokens.slice();
+      const current = self.current;
 
       for (const acceptor of acceptors) {
         const items = acceptor.split(/\s+/).map((x) => { return x.trim(); });
@@ -30,6 +31,7 @@ function Parser(grammar, base, options = {}) {
 
         const values = items.map(item => {
           const token = self.current;
+
           console.log('token', token);
 
           if (self[item]) {
@@ -58,7 +60,7 @@ function Parser(grammar, base, options = {}) {
 
         if (!values || values.includes(false)) {
           self.tokens = state;
-          self.current = token;
+          self.current = current;
         } else {
           if (values.length === 1) {
             node.value = values[0];
@@ -98,5 +100,16 @@ Parser.prototype.parse = function(tokens) {
     return null;
   }
 };
+
+Parser.prototype.simplify = function(tree) {
+  if (tree.value) {
+    tree = this.simplify(tree.value);
+  } else if (tree.values) {
+    for (let i = 0; i < tree.values.length; i++) {
+      tree.values[i] = this.simplify(tree.values[i]);
+    }
+  }
+  return tree;
+}
 
 module.exports = Parser;

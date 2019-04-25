@@ -40,13 +40,13 @@ describe('Lexer Test', () => {
   it('should get a second token', () => {
     const token = lex.token();
 
-    expect(token).toHaveProperty('type', 'INTEGER');
-    expect(token).toHaveProperty('value', '10');
-    expect(token).toHaveProperty('position', 4);
+    expect(token).toHaveProperty('type', 'ASSIGNMENT');
+    expect(token).toHaveProperty('value', '=');
+    expect(token).toHaveProperty('position', 2);
   });
 
   it('should parse a complex string', () => {
-    const tokens = lex.parse('x = "fooooo" + y++');
+    const tokens = lex.tokenize('x = "fooooo" + y++');
 
     expect(tokens).toHaveLength(6);
   });

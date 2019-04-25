@@ -9,12 +9,13 @@ describe('Parser Test', () => {
 
   it('should create a new parser instance', () => {
     parser = new Parser({
-      Expression: 'AssignmentExpression | SYMBOL | Value',
-      AssignmentExpression: 'SYMBOL ASSIGNMENT Value',
+      Statement: 'AssignmentExpression | Expression | SYMBOL | Value',
+      Expression: 'Value OPERATOR Value | Value',
+      AssignmentExpression: 'SYMBOL ASSIGNMENT Expression',
       Value: 'Number | Boolean',
       Number: 'INTEGER | FLOAT',
       Boolean: 'TRUE | FALSE'
-    }, 'Expression');
+    }, 'Statement');
   });
 
   it('should parse a simple expression', () => {
@@ -27,8 +28,17 @@ describe('Parser Test', () => {
     }, {
       type: 'INTEGER',
       value: 10
+    }, {
+      type: 'OPERATOR',
+      value: '+'
+    }, {
+      type: 'INTEGER',
+      value: 20
     } ]);
 
     console.pp(tree);
+
+    const simple = parser.simplify(tree);
+    console.pp(simple);
   });
 });
