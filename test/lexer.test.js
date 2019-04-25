@@ -85,6 +85,6 @@ describe('Lexer Test', () => {
     const tokens = lex.tokenize('x = "fooooo" + y++ 10');
 
     expect(tokens).toHaveLength(7);
-    console.pp(tokens);
+    // console.pp(tokens);
   });
 });

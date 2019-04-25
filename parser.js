@@ -4,22 +4,23 @@
 
 function Node(type) {
   this.type = type;
+  this.object = 'ast-node';
 }
 
 //////////
 
-function Parser(grammar, base, options = {}) {
+function Parser(grammar, base) {
   const self = this;
 
   self.base = base;
 
   for (const type in grammar) {
     self[type] = function() {
-      console.log('evaluating', type);
+      // console.log('evaluating', type);
       const node = new Node(type);
       const acceptors = grammar[type].split('|').map((x) => { return x.trim(); });
 
-      console.log(type, acceptors);
+      // console.log(type, acceptors);
 
       const state = self.tokens.slice();
       const current = self.current;
@@ -30,36 +31,33 @@ function Parser(grammar, base, options = {}) {
           continue;
         }
 
-        console.log('state', state);
+        // console.log('state', state);
 
         const values = items.map(item => {
           const token = self.current;
 
-          console.log('token', token);
+          // console.log('token', token);
 
           if (self[item]) {
-            console.log('subtype', item);
+            // console.log('subtype', item);
             const value = self[item]();
             if (!value) {
-              console.log('nope');
-              return false;
-            } else {
-              console.log('yup');
-              return value
-            }
-          } else {
-            console.log('implicit type', item, self.current);
-            if (self.accept(item)) {
-              console.log('yup', item);
-              return token;
-            } else {
-              console.log('nope', item);
+              // console.log('nope');
               return false;
             }
+            // console.log('yup');
+            return value;
           }
+          // console.log('implicit type', item, self.current);
+          if (self.accept(item)) {
+            // console.log('yup', item);
+            return token;
+          }
+          // console.log('nope', item);
+          return false;
         });
 
-        console.log('values', values);
+        // console.log('values', values);
 
         if (!values || values.includes(false)) {
           self.tokens = state;
@@ -100,20 +98,21 @@ Parser.prototype.parse = function(tokens) {
   this.next();
   if (this[this.base]) {
     return this[this.base]();
-  } else {
-    return null;
   }
+  return null;
 };
 
 Parser.prototype.simplify = function(tree) {
-  if (tree.value) {
+  if (tree.value && tree.object === 'ast-node') {
     tree = this.simplify(tree.value);
   } else if (tree.values) {
     for (let i = 0; i < tree.values.length; i++) {
-      tree.values[i] = this.simplify(tree.values[i]);
+      if (tree.values[i].object === 'ast-node') {
+        tree.values[i] = this.simplify(tree.values[i]);
+      }
     }
   }
   return tree;
-}
+};
 
 module.exports = Parser;

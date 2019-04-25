@@ -11,7 +11,7 @@
     "jest": "^24.7.1"
   },
   "scripts": {
-    "lint": "eslint index.js test/*.js",
+    "lint": "eslint *.js test/*.js",
     "test": "jest"
   },
   "dependencies": {

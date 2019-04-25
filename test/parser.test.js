@@ -6,6 +6,7 @@ const Parser = require('../parser');
 
 describe('Parser Test', () => {
   let parser;
+  let tree;
 
   it('should create a new parser instance', () => {
     parser = new Parser({
@@ -19,7 +20,7 @@ describe('Parser Test', () => {
   });
 
   it('should parse a simple expression', () => {
-    const tree = parser.parse([ {
+    tree = parser.parse([ {
       type: 'SYMBOL',
       value: 'x'
     }, {
@@ -42,9 +43,12 @@ describe('Parser Test', () => {
       value: 30
     } ]);
 
-    console.pp(tree);
+    expect(tree).toHaveProperty('type', 'Statement');
+  });
 
+  it('should simplify the parse tree', () => {
     const simple = parser.simplify(tree);
-    console.pp(simple);
+
+    expect(simple).toHaveProperty('type', 'AssignmentExpression');
   });
 });
