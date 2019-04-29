@@ -61,4 +61,10 @@ describe('Scripting testing', () => {
     expect(result).toBe(10);
     expect(environment).toHaveProperty('z', 10);
   });
+
+  it('should evaluate negation expressions', () => {
+    expect('!false'.µ).toBe(true);
+    expect('!true'.µ).toBe(false);
+    expect('!10'.µ).toBe(false);
+  });
 });

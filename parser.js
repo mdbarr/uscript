@@ -14,55 +14,76 @@ function Parser(grammar, base) {
 
   self.base = base;
 
+  self.$rules = {};
+
+  self.rules = {
+    has: (type) => {
+      return Boolean(self.$rules.hasOwnProperty(type));
+    },
+    register: (type, acceptor) => {
+      self.$rules[type] = acceptor;
+    },
+    run: (type) => {
+      return self.$rules[type]();
+    }
+  };
+
   for (const type in grammar) {
-    self[type] = function() {
-      // console.log('evaluating', type);
+    self.rules.register(type, () => {
+      if (self.$depth > self.$maxDepth) {
+        return false;
+      }
+      self.$depth++;
+
+      // console.log(self.$indent(), 'evaluating', type);
       const node = new Node(type);
       const acceptors = grammar[type].split('|').map((x) => { return x.trim(); });
 
-      // console.log(type, acceptors);
+      // console.log(self.$indent(), type, acceptors);
 
-      const state = self.tokens.slice();
-      const current = self.current;
+      if (self.remaining() === 0) {
+        // console.log(self.$indent(), 'none remaining');
+        return false;
+      }
 
       for (const acceptor of acceptors) {
         const items = acceptor.split(/\s+/).map((x) => { return x.trim(); });
-        if (self.tokens.length < items.length - 1) {
-          continue;
-        }
 
-        // console.log('state', state);
+        // console.log(self.$indent(), 'acceptor', acceptor);
+        // console.log(self.$indent(), 'items', items.length);
+        // console.log(self.$indent(), 'remaining', self.remaining());
 
-        const values = items.map(item => {
-          const token = self.current;
+        const values = [];
 
-          // console.log('token', token);
+        for (const item of items) {
+          const token = self.token();
+          // console.log(self.$indent(), `acceptor-${ self.$depth }`, item, token);
 
-          if (self[item]) {
-            // console.log('subtype', item);
-            const value = self[item]();
+          if (self.rules.has(item)) {
+            // console.log(self.$indent(), 'subtype', item);
+            const value = self.rules.run(item);
             if (!value) {
-              // console.log('nope');
-              return false;
+              // console.log(self.$indent(), 'subtype - nope', value);
+              break;
+            } else {
+              // console.log(self.$indent(), 'subtype - yup');
+              values.push(value);
+              continue;
             }
-            // console.log('yup');
-            return value;
           }
-          // console.log('implicit type', item, self.current);
+          // console.log(self.$indent(), 'implicit type', item, self.token());
           if (self.accept(item)) {
-            // console.log('yup', item);
-            return token;
+            // console.log(self.$indent(), 'implicit type - yup', item);
+            values.push(token);
+          } else {
+            // console.log(self.$indent(), 'implicit type - nope', item);
+            break;
           }
-          // console.log('nope', item);
-          return false;
-        });
+        }
+        // console.log(self.$indent(), 'item loop done');
 
-        // console.log('values', values);
-
-        if (!values || values.includes(false)) {
-          self.tokens = state;
-          self.current = current;
-        } else {
+        // console.log(self.$indent(), 'done - values', values.length);
+        if (values.length !== 0) {
           if (values.length === 1) {
             node.value = values[0];
           } else {
@@ -71,39 +92,61 @@ function Parser(grammar, base) {
           return node;
         }
       }
+      // console.log(self.$indent(), 'acceptor loop done');
       return false;
-    };
+    });
   }
 }
 
+Parser.prototype.remaining = function() {
+  return this.$tokens.length - this.$index;
+};
+
 Parser.prototype.next = function() {
-  if (this.tokens && this.tokens.length) {
-    this.current = this.tokens.shift();
-    return this.current;
-  }
-  return null;
+  this.$index++;
+};
+
+Parser.prototype.token = function() {
+  return this.$tokens[this.$index];
+};
+
+Parser.prototype.$indent = function() {
+  return '  '.repeat(this.$depth);
 };
 
 Parser.prototype.accept = function(type) {
-  if (this.current && (this.current.type === type ||
-                       this.current.value === type)) {
-    this.next();
-    return true;
+  if (this.$index < this.$tokens.length) {
+    const token = this.$tokens[this.$index];
+    if (token.type === type || token.value === type) {
+      // console.log(this.$indent(), 'accept', this.$index, this.$tokens.length - 1);
+      this.next();
+      return true;
+    }
   }
   return false;
 };
 
+Parser.prototype.$maxDepth = 1000;
+
 Parser.prototype.parse = function(tokens) {
-  this.tokens = tokens;
-  this.next();
-  if (this[this.base]) {
-    return this[this.base]();
+  this.$tokens = tokens;
+  this.$index = 0;
+
+  this.$depth = 0;
+
+  if (this.rules.has(this.base)) {
+    const result = this.rules.run(this.base);
+    // console.log('remaining', this.remaining());
+    return result;
   }
+
   return null;
 };
 
 Parser.prototype.simplify = function(tree) {
-  if (tree.value && tree.object === 'ast-node') {
+  if (!tree) {
+    return null;
+  } else if (tree.value && tree.object === 'ast-node') {
     tree = this.simplify(tree.value);
   } else if (tree.values) {
     for (let i = 0; i < tree.values.length; i++) {

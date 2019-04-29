@@ -37,6 +37,9 @@ const rules = [
     type: 'ASSIGNMENT',
     pattern: /=/
   }, {
+    type: 'NEGATION',
+    pattern: /!/
+  }, {
     type: 'OPERATOR',
     pattern: /[+*/-]/
   }, {
@@ -46,9 +49,10 @@ const rules = [
 ];
 
 const grammar = {
-  Statement: 'AssignmentExpression | Expression | SYMBOL | Value',
+  Statement: 'AssignmentExpression | NegationExpression | Expression | SYMBOL | Value',
   Expression: 'Value OPERATOR Expression | Value OPERATOR Value | Value',
   AssignmentExpression: 'SYMBOL ASSIGNMENT Expression',
+  NegationExpression: 'NEGATION Value',
   Value: 'Number | Boolean | STRING',
   Number: 'INTEGER | FLOAT',
   Boolean: 'TRUE | FALSE'
@@ -157,12 +161,17 @@ Uscript.prototype.eval = function(script, environment) {
       // console.log(variable, '=', value);
       // console.log(frame);
       return value;
+    } else if (object.type === 'NegationExpression') {
+      const value = resolve(object.values[1]);
+      return !value;
     }
     return false;
   }
 
+  //console.pp(tree);
+
   const result = resolve(tree);
-  // console.log(result);
+  //console.log(result);
 
   return result;
 };
