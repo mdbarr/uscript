@@ -82,17 +82,23 @@ function Parser(grammar, base) {
         }
         // console.log(self.$indent(), 'item loop done');
 
-        // console.log(self.$indent(), 'done - values', values.length);
-        if (values.length !== 0) {
+        // console.log(self.$indent(), 'done - values', values.length, items.length);
+        if (values.length !== items.length) {
+          for (const value of values) {
+            self.reject(value);
+          }
+        } else if (values.length !== 0) {
           if (values.length === 1) {
             node.value = values[0];
           } else {
             node.values = values;
           }
+          self.$depth--;
           return node;
         }
       }
       // console.log(self.$indent(), 'acceptor loop done');
+      self.$depth--;
       return false;
     });
   }
@@ -111,7 +117,7 @@ Parser.prototype.token = function() {
 };
 
 Parser.prototype.$indent = function() {
-  return '  '.repeat(this.$depth);
+  return '  '.repeat(this.$depth - 1);
 };
 
 Parser.prototype.accept = function(type) {
@@ -126,6 +132,12 @@ Parser.prototype.accept = function(type) {
   return false;
 };
 
+Parser.prototype.reject = function() {
+  if (this.$index > 0) {
+    this.$index--;
+  }
+};
+
 Parser.prototype.$maxDepth = 1000;
 
 Parser.prototype.parse = function(tokens) {
@@ -136,7 +148,7 @@ Parser.prototype.parse = function(tokens) {
 
   if (this.rules.has(this.base)) {
     const result = this.rules.run(this.base);
-    // console.log('remaining', this.remaining());
+    // console.log('remaining', this.remaining(), this.token());
     return result;
   }
 

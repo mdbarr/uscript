@@ -4,8 +4,9 @@ const Uscript = require('../uscript');
 
 describe('Scripting testing', () => {
   const environment = {
-    x: 10,
-    foo: 'bar'
+    foo: 'bar',
+    i: { j: { k: 20 } },
+    x: 10
   };
 
   let uscript;
@@ -66,5 +67,10 @@ describe('Scripting testing', () => {
     expect('!false'.µ).toBe(true);
     expect('!true'.µ).toBe(false);
     expect('!10'.µ).toBe(false);
+    expect('!!10'.µ).toBe(true);
+  });
+
+  it('should evaluate a compound dot expression', () => {
+    expect('i.j.k'.µ).toBe(20);
   });
 });

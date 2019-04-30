@@ -1,5 +1,6 @@
 'use strict';
 
+require('barrkeep/pp');
 const Lexer = require('./lexer');
 const Parser = require('./parser');
 
@@ -40,6 +41,9 @@ const rules = [
     type: 'NEGATION',
     pattern: /!/
   }, {
+    type: 'DOT',
+    pattern: /\./
+  }, {
     type: 'OPERATOR',
     pattern: /[+*/-]/
   }, {
@@ -49,10 +53,12 @@ const rules = [
 ];
 
 const grammar = {
-  Statement: 'AssignmentExpression | NegationExpression | Expression | SYMBOL | Value',
-  Expression: 'Value OPERATOR Expression | Value OPERATOR Value | Value',
+  Statement: 'AssignmentExpression | NegationExpression | DotExpression | Expression | Term',
+  Expression: 'Term OPERATOR Expression | Term',
   AssignmentExpression: 'SYMBOL ASSIGNMENT Expression',
-  NegationExpression: 'NEGATION Value',
+  NegationExpression: 'NEGATION Statement',
+  DotExpression: 'SYMBOL DOT DotExpression | SYMBOL',
+  Term: 'SYMBOL | Value',
   Value: 'Number | Boolean | STRING',
   Number: 'INTEGER | FLOAT',
   Boolean: 'TRUE | FALSE'
@@ -102,6 +108,7 @@ Uscript.multiply = function(a, b) {
 
 Uscript.prototype.eval = function(script, environment) {
   const tokens = this.lexer.tokenize(script);
+  // console.pp(tokens);
   const ast = this.parser.parse(tokens);
   const tree = this.parser.simplify(ast);
 
@@ -119,7 +126,11 @@ Uscript.prototype.eval = function(script, environment) {
     return local[0];
   }
 
-  function lookup(variable) {
+  function lookup(variable, frame) {
+    if (frame) {
+      return frame[variable];
+    }
+
     for (let i = 0; i < local.length; i++) {
       if (local[i].hasOwnProperty(variable)) {
         return local[i][variable];
@@ -128,14 +139,14 @@ Uscript.prototype.eval = function(script, environment) {
     return undefined;
   }
 
-  function resolve(object) {
+  function resolve(object, frame) {
     // "Native" type
     if (object.type === 'INTEGER' || object.type === 'FLOAT' ||
         object.type === 'STRING' || object.type === 'TRUE' ||
        object.type === 'FALSE' ) {
       return object.value;
     } else if (object.type === 'SYMBOL') {
-      return lookup(object.value);
+      return lookup(object.value, frame);
     } else if (object.type === 'OPERATOR') {
       if (object.value === '+') {
         return Uscript.add;
@@ -155,7 +166,7 @@ Uscript.prototype.eval = function(script, environment) {
       const variable = object.values[0].value;
       const value = resolve(object.values[2]);
 
-      const frame = findFrame(variable);
+      frame = findFrame(variable);
       frame[variable] = value;
 
       // console.log(variable, '=', value);
@@ -164,14 +175,24 @@ Uscript.prototype.eval = function(script, environment) {
     } else if (object.type === 'NegationExpression') {
       const value = resolve(object.values[1]);
       return !value;
+    } else if (object.type === 'DotExpression') {
+      // console.log('object');
+      // console.pp(object);
+      frame = lookup(object.values[0].value, frame);
+      // console.log('frame');
+      // console.pp(frame);
+      const result = resolve(object.values[2], frame);
+      // console.log('result');
+      // console.pp(result);
+      return result;
     }
     return false;
   }
 
-  //console.pp(tree);
+  // console.pp(tree);
 
   const result = resolve(tree);
-  //console.log(result);
+  // console.log(result);
 
   return result;
 };
