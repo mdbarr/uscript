@@ -9,13 +9,13 @@
   "private": false,
   "devDependencies": {
     "eslint": "^5.16.0",
-    "jest": "^24.7.1"
+    "jest": "^24.8.0"
   },
   "scripts": {
     "lint": "eslint *.js test/*.js",
     "test": "jest"
   },
   "dependencies": {
-    "barrkeep": "^2.0.0"
+    "barrkeep": "^2.0.1"
   }
 }
