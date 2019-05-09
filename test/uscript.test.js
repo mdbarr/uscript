@@ -6,7 +6,8 @@ describe('Scripting testing', () => {
   const environment = {
     foo: 'bar',
     i: { j: { k: 20 } },
-    x: 10
+    x: 10,
+    f: () => 30
   };
 
   let uscript;
@@ -72,5 +73,9 @@ describe('Scripting testing', () => {
 
   it('should evaluate a compound dot expression', () => {
     expect('i.j.k'.µ).toBe(20);
+  });
+
+  it('should evaluate a function expression', () => {
+    expect('f()'.µ).toBe(30);
   });
 });

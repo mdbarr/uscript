@@ -42,7 +42,19 @@ const rules = [
     pattern: /!/
   }, {
     type: 'DOT',
-    pattern: /\./
+    pattern: /[.]/
+  }, {
+    type: 'L-PAREN',
+    pattern: /\(/
+  }, {
+    type: 'R-PAREN',
+    pattern: /\)/
+  }, {
+    type: 'L-BRACKET',
+    pattern: /\[/
+  }, {
+    type: 'R-BRACKET',
+    pattern: /\]/
   }, {
     type: 'OPERATOR',
     pattern: /[+*/-]/
@@ -53,11 +65,12 @@ const rules = [
 ];
 
 const grammar = {
-  Statement: 'AssignmentExpression | NegationExpression | DotExpression | Expression | Term',
+  Statement: 'AssignmentExpression | NegationExpression | FunctionExpression | DotExpression | Expression | Term',
   Expression: 'Term OPERATOR Expression | Term',
   AssignmentExpression: 'SYMBOL ASSIGNMENT Expression',
   NegationExpression: 'NEGATION Statement',
   DotExpression: 'SYMBOL DOT DotExpression | SYMBOL',
+  FunctionExpression: 'SYMBOL L-PAREN R-PAREN',
   Term: 'SYMBOL | Value',
   Value: 'Number | Boolean | STRING',
   Number: 'INTEGER | FLOAT',
@@ -185,11 +198,16 @@ Uscript.prototype.eval = function(script, environment) {
       // console.log('result');
       // console.pp(result);
       return result;
+    } else if (object.type === 'FunctionExpression') {
+      const f = resolve(object.values[0]);
+      return f();
     }
     return false;
   }
 
+  // console.log('here');
   // console.pp(tree);
+  // console.log('there');
 
   const result = resolve(tree);
   // console.log(result);
