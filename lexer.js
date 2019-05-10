@@ -2,75 +2,69 @@
 'use strict';
 
 function Lexer(rules, { ignoreWhitespace = true } = {}) {
-  this.keys = [];
   this.patterns = [];
-  this.transforms = [];
 
-  if (Array.isArray(rules)) {
-    for (const item of rules) {
-      const pattern = `(${ item.pattern.source })`;
-      this.keys.push(item.type || item.name);
-      this.patterns.push(pattern);
-      this.transforms.push(item.transform);
+  for (const item of rules) {
+    const pattern = {
+      type: item.type || item.name,
+      pattern: item.pattern,
+      transform: item.transform
+    };
+
+    if (item.pattern instanceof RegExp) {
+      let source = item.pattern.source;
+      if (!source.startsWith('^')) {
+        source = `^${ source }`;
+      }
+      pattern.regexp = new RegExp(source, item.pattern.flags);
+    } else {
+      pattern.regexp = new RegExp(pattern.pattern);
     }
-  } else {
-    for (const name in rules) {
-      const pattern = `(${ rules[name].source })`;
-      this.keys.push(name);
-      this.patterns.push(pattern);
-      this.transforms.push(null);
-    }
+
+    this.patterns.push(pattern);
   }
 
-  this.buffer = '';
+  this.whitespace = ignoreWhitespace ? /^\s+/ : null;
 
-  this.regexp = new RegExp(this.patterns.join('|'), 'g');
-  this.regexp.lastIndex = 0;
-
-  this.whitespace = ignoreWhitespace ? /\S/g : null;
+  this.input('');
 }
 
 Lexer.prototype.input = function(buffer) {
   this.buffer = buffer;
-  this.regexp.lastIndex = 0;
+  this.position = 0;
 };
 
 Lexer.prototype.token = function() {
-  if (this.regexp.lastIndex >= this.buffer.length) {
+  if (this.position >= this.buffer.length) {
     return null;
   }
 
+  const string = this.buffer.substring(this.position);
+
   if (this.whitespace) {
-    this.whitespace.lastIndex = this.regexp.lastIndex;
-    const match = this.whitespace.exec(this.buffer);
-    if (match) {
-      this.regexp.lastIndex = match.index;
-    } else {
-      return null;
+    const match = string.match(this.whitespace);
+    if (Array.isArray(match)) {
+      this.position += match[0].length;
+      return this.token();
     }
   }
 
-  const result = this.regexp.exec(this.buffer);
-  if (result === null) {
-    throw Error(`Cannot match a token at position ${ this.regexp.lastIndex }`);
-  } else {
-    for (let i = 0; i < this.keys.length; i++) {
-      if (result[i + 1] !== undefined) {
-        let value = result[0];
-        if (this.transforms[i]) {
-          value = this.transforms[i](value);
-        }
+  for (const pattern of this.patterns) {
+    const match = string.match(pattern.regexp);
+    if (Array.isArray(match)) {
+      const value = pattern.transform ? pattern.transform(match[0], match) : match[0];
+      const result = {
+        type: pattern.type,
+        value,
+        position: this.position
+      };
+      this.position += match[0].length;
 
-        return {
-          type: this.keys[i],
-          value,
-          position: result.index
-        };
-      }
+      return result;
     }
-    console.log(result);
-    throw Error('Unknown lexical token at ${ result.index }');
   }
+
+  throw Error(`Unknown lexical token at pos ${ this.position }: "${ string }"`);
 };
 
 Lexer.prototype.tokenize = function(input) {

@@ -7,7 +7,7 @@ describe('Scripting testing', () => {
     foo: 'bar',
     i: { j: { k: 20 } },
     x: 10,
-    f: () => 30
+    f: () => { return 30; }
   };
 
   let uscript;

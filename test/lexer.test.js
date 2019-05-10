@@ -46,15 +46,19 @@ describe('Lexer Test', () => {
     }, {
       type: 'SYMBOL',
       pattern: /[a-zA-Z]\w*/
+    }, {
+      type: 'EOS',
+      pattern: /(;*$|;)/
     } ]);
 
     expect(lex).toBeInstanceOf(Lexer);
   });
 
   it('should set the lexer input', () => {
-    lex.input('x = 10');
+    lex.input('x = 10;');
 
-    expect(lex.buffer).toBe('x = 10');
+    expect(lex.buffer).toBe('x = 10;');
+    expect(lex.position).toBe(0);
   });
 
   it('should get a token', () => {
@@ -79,6 +83,20 @@ describe('Lexer Test', () => {
     expect(token).toHaveProperty('type', 'INTEGER');
     expect(token).toHaveProperty('value', 10);
     expect(token).toHaveProperty('position', 4);
+  });
+
+  it('should get a fourth token', () => {
+    const token = lex.token();
+
+    expect(token).toHaveProperty('type', 'EOS');
+    expect(token).toHaveProperty('value', ';');
+    expect(token).toHaveProperty('position', 6);
+  });
+
+  it('should attempt to get a fifth token', () => {
+    const token = lex.token();
+
+    expect(token).toBe(null);
   });
 
   it('should parse a complex string', () => {
