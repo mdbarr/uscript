@@ -61,11 +61,21 @@ const rules = [
   }, {
     type: 'SYMBOL',
     pattern: /[a-zA-Z]\w*/
+  }, {
+    type: 'EOS',
+    pattern: /(;*$|;)/
   }
 ];
 
 const grammar = {
-  Statement: 'AssignmentExpression | NegationExpression | FunctionExpression | DotExpression | Expression | Term',
+  Statement: [
+    'AssignmentExpression EOS',
+    'NegationExpression',
+    'DotExpression EOS',
+    'FunctionExpression EOS',
+    'Expression EOS',
+    'Term EOS'
+  ],
   Expression: 'Term OPERATOR Expression | Term',
   AssignmentExpression: 'SYMBOL ASSIGNMENT Expression',
   NegationExpression: 'NEGATION Statement',
@@ -120,9 +130,31 @@ Uscript.multiply = function(a, b) {
 };
 
 Uscript.prototype.eval = function(script, environment) {
+  if (!script) {
+    return null;
+  }
+
   const tokens = this.lexer.tokenize(script);
+  if (!tokens.length) {
+    return null;
+  }
+  if (tokens[tokens.length - 1].type !== 'EOS') {
+    tokens.push({
+      type: 'EOS',
+      value: ';',
+      position: script.length
+    });
+  }
+
   // console.pp(tokens);
+
   const ast = this.parser.parse(tokens);
+
+  if (this.parser.remaining() > 0) {
+    const token = this.parser.token();
+    throw new Error(`Unexpected token at position ${ token.position }: ${ token.value } (${ token.type })`);
+  }
+
   const tree = this.parser.simplify(ast);
 
   const local = this.environment.slice();
@@ -201,6 +233,8 @@ Uscript.prototype.eval = function(script, environment) {
     } else if (object.type === 'FunctionExpression') {
       const f = resolve(object.values[0]);
       return f();
+    } else if (object.type === 'Statement') {
+      return resolve(object.values[0]);
     }
     return false;
   }

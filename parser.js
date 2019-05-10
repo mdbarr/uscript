@@ -37,7 +37,8 @@ function Parser(grammar, base) {
 
       // console.log(self.$indent(), 'evaluating', type);
       const node = new Node(type);
-      const acceptors = grammar[type].split('|').map((x) => { return x.trim(); });
+      const acceptors = Array.isArray(grammar[type]) ? grammar[type] :
+        grammar[type].split('|').map((x) => { return x.trim(); });
 
       // console.log(self.$indent(), type, acceptors);
 
