@@ -1,13 +1,15 @@
 'use strict';
 
 const Uscript = require('../uscript');
+const { bytes } = require('barrkeep/transforms');
 
 describe('Scripting testing', () => {
   const environment = {
     foo: 'bar',
     i: { j: { k: 20 } },
     x: 10,
-    f: () => { return 30; }
+    f: () => { return 30; },
+    bytes
   };
 
   let uscript;
@@ -77,5 +79,9 @@ describe('Scripting testing', () => {
 
   it('should evaluate a function expression', () => {
     expect('f()'.µ).toBe(30);
+  });
+
+  it('should evaluate a filter expression', () => {
+    expect('2439673 | bytes'.µ).toBe('2.327 MB');
   });
 });

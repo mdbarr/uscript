@@ -56,6 +56,9 @@ const rules = [
     type: 'R-BRACKET',
     pattern: /\]/
   }, {
+    type: 'PIPE',
+    pattern: /\|/
+  }, {
     type: 'OPERATOR',
     pattern: /[+*/-]/
   }, {
@@ -73,6 +76,7 @@ const grammar = {
     'NegationExpression',
     'DotExpression EOS',
     'FunctionExpression EOS',
+    'FilterExpression EOS',
     'Expression EOS',
     'Term EOS'
   ],
@@ -81,6 +85,7 @@ const grammar = {
   NegationExpression: 'NEGATION Statement',
   DotExpression: 'SYMBOL DOT DotExpression | SYMBOL',
   FunctionExpression: 'SYMBOL L-PAREN R-PAREN',
+  FilterExpression: 'Term PIPE FilterExpression | SYMBOL',
   Term: 'SYMBOL | Value',
   Value: 'Number | Boolean | STRING',
   Number: 'INTEGER | FLOAT',
@@ -233,6 +238,10 @@ Uscript.prototype.eval = function(script, environment) {
     } else if (object.type === 'FunctionExpression') {
       const f = resolve(object.values[0]);
       return f();
+    } else if (object.type === 'FilterExpression') {
+      const value = resolve(object.values[0]);
+      const filter = resolve(object.values[2]);
+      return filter(value);
     } else if (object.type === 'Statement') {
       return resolve(object.values[0]);
     }
