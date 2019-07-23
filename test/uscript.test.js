@@ -8,7 +8,7 @@ describe('Scripting testing', () => {
     foo: 'bar',
     i: { j: { k: 20 } },
     x: 10,
-    f: () => { return 30; },
+    _f: () => { return 30; },
     bytes
   };
 
@@ -78,7 +78,7 @@ describe('Scripting testing', () => {
   });
 
   it('should evaluate a function expression', () => {
-    expect('f()'.µ).toBe(30);
+    expect('_f()'.µ).toBe(30);
   });
 
   it('should evaluate a filter expression', () => {

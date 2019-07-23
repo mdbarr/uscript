@@ -63,7 +63,7 @@ const rules = [
     pattern: /[+*/-]/
   }, {
     type: 'SYMBOL',
-    pattern: /[a-zA-Z]\w*/
+    pattern: /[a-zA-Z_$]\w*/
   }, {
     type: 'EOS',
     pattern: /(;*$|;)/
