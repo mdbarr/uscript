@@ -1,6 +1,6 @@
 {
   "name": "@mdbarr/uscript",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Micro Scripting Language inside JavaScript",
   "main": "index.js",
   "bin": "./cli.js",
