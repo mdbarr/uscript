@@ -15,33 +15,35 @@ describe('Parser Test', () => {
       AssignmentExpression: 'SYMBOL ASSIGNMENT Expression',
       Value: 'Number | Boolean | STRING',
       Number: 'INTEGER | FLOAT',
-      Boolean: 'TRUE | FALSE'
+      Boolean: 'TRUE | FALSE',
     }, 'Statement');
   });
 
   it('should parse a simple expression', () => {
-    tree = parser.parse([ {
-      type: 'SYMBOL',
-      value: 'x'
-    }, {
-      type: 'ASSIGNMENT',
-      value: '='
-    }, {
-      type: 'INTEGER',
-      value: 10
-    }, {
-      type: 'OPERATOR',
-      value: '+'
-    }, {
-      type: 'INTEGER',
-      value: 20
-    }, {
-      type: 'OPERATOR',
-      value: '-'
-    }, {
-      type: 'INTEGER',
-      value: 30
-    } ]);
+    tree = parser.parse([
+      {
+        type: 'SYMBOL',
+        value: 'x',
+      }, {
+        type: 'ASSIGNMENT',
+        value: '=',
+      }, {
+        type: 'INTEGER',
+        value: 10,
+      }, {
+        type: 'OPERATOR',
+        value: '+',
+      }, {
+        type: 'INTEGER',
+        value: 20,
+      }, {
+        type: 'OPERATOR',
+        value: '-',
+      }, {
+        type: 'INTEGER',
+        value: 30,
+      },
+    ]);
 
     expect(tree).toHaveProperty('type', 'Statement');
   });

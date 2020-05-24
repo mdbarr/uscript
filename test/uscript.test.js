@@ -8,8 +8,8 @@ describe('Scripting testing', () => {
     foo: 'bar',
     i: { j: { k: 20 } },
     x: 10,
-    _f: () => { return 30; },
-    bytes
+    _f: () => 30,
+    bytes,
   };
 
   let uscript;
@@ -17,7 +17,7 @@ describe('Scripting testing', () => {
   it('should create a new uscript instance', () => {
     uscript = new Uscript({
       environment,
-      shims: true
+      shims: true,
     });
   });
 

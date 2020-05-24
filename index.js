@@ -7,5 +7,5 @@ const Uscript = require('./uscript');
 module.exports = {
   Lexer,
   Parser,
-  Uscript
+  Uscript,
 };

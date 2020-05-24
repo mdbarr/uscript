@@ -2,14 +2,14 @@
 
 //////////
 
-function Node(type) {
+function Node (type) {
   this.type = type;
   this.object = 'ast-node';
 }
 
 //////////
 
-function Parser(grammar, base) {
+function Parser (grammar, base) {
   const self = this;
 
   self.base = base;
@@ -17,15 +17,11 @@ function Parser(grammar, base) {
   self.$rules = {};
 
   self.rules = {
-    has: (type) => {
-      return Boolean(self.$rules.hasOwnProperty(type));
-    },
+    has: (type) => Boolean(self.$rules.hasOwnProperty(type)),
     register: (type, acceptor) => {
       self.$rules[type] = acceptor;
     },
-    run: (type) => {
-      return self.$rules[type]();
-    }
+    run: (type) => self.$rules[type](),
   };
 
   for (const type in grammar) {
@@ -38,7 +34,7 @@ function Parser(grammar, base) {
       // console.log(self.$indent(), 'evaluating', type);
       const node = new Node(type);
       const acceptors = Array.isArray(grammar[type]) ? grammar[type] :
-        grammar[type].split('|').map((x) => { return x.trim(); });
+        grammar[type].split('|').map((x) => x.trim());
 
       // console.log(self.$indent(), type, acceptors);
 
@@ -48,7 +44,7 @@ function Parser(grammar, base) {
       }
 
       for (const acceptor of acceptors) {
-        const items = acceptor.split(/\s+/).map((x) => { return x.trim(); });
+        const items = acceptor.split(/\s+/).map((x) => x.trim());
 
         // console.log(self.$indent(), 'acceptor', acceptor);
         // console.log(self.$indent(), 'items', items.length);

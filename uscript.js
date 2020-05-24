@@ -8,66 +8,66 @@ const rules = [
   {
     type: 'STRING',
     pattern: /"[^"]+"/,
-    transform: x => { return x.substring(1, x.length - 1); }
+    transform: x => x.substring(1, x.length - 1),
   }, {
     type: 'INTEGER',
     pattern: /\d+/,
-    transform: x => { return parseInt(x, 10); }
+    transform: x => parseInt(x, 10),
   }, {
     type: 'FLOAT',
     pattern: /\d+\.\d+/,
-    transform: x => { return parseFloat(x, 10); }
+    transform: x => parseFloat(x, 10),
   }, {
     type: 'TRUE',
     pattern: /true/,
-    transform: () => { return true; }
+    transform: () => true,
   }, {
     type: 'FALSE',
     pattern: /false/,
-    transform: () => { return false; }
+    transform: () => false,
   }, {
     type: 'INCREMENT',
-    pattern: /\+\+/
+    pattern: /\+\+/,
   }, {
     type: 'DECREMENT',
-    pattern: /--/
+    pattern: /--/,
   }, {
     type: 'EQUALITY',
-    pattern: /==/
+    pattern: /==/,
   }, {
     type: 'ASSIGNMENT',
-    pattern: /=/
+    pattern: /=/,
   }, {
     type: 'NEGATION',
-    pattern: /!/
+    pattern: /!/,
   }, {
     type: 'DOT',
-    pattern: /[.]/
+    pattern: /[.]/,
   }, {
     type: 'L-PAREN',
-    pattern: /\(/
+    pattern: /\(/,
   }, {
     type: 'R-PAREN',
-    pattern: /\)/
+    pattern: /\)/,
   }, {
     type: 'L-BRACKET',
-    pattern: /\[/
+    pattern: /\[/,
   }, {
     type: 'R-BRACKET',
-    pattern: /\]/
+    pattern: /\]/,
   }, {
     type: 'PIPE',
-    pattern: /\|/
+    pattern: /\|/,
   }, {
     type: 'OPERATOR',
-    pattern: /[+*/-]/
+    pattern: /[+*/-]/,
   }, {
     type: 'SYMBOL',
-    pattern: /[a-zA-Z_$]\w*/
+    pattern: /[a-zA-Z_$]\w*/,
   }, {
     type: 'EOS',
-    pattern: /(;*$|;)/
-  }
+    pattern: /(;*$|;)/,
+  },
 ];
 
 const grammar = {
@@ -78,7 +78,7 @@ const grammar = {
     'FunctionExpression EOS',
     'FilterExpression EOS',
     'Expression EOS',
-    'Term EOS'
+    'Term EOS',
   ],
   Expression: 'Term OPERATOR Expression | Term',
   AssignmentExpression: 'SYMBOL ASSIGNMENT Expression',
@@ -89,12 +89,10 @@ const grammar = {
   Term: 'SYMBOL | Value',
   Value: 'Number | Boolean | STRING',
   Number: 'INTEGER | FLOAT',
-  Boolean: 'TRUE | FALSE'
+  Boolean: 'TRUE | FALSE',
 };
 
-function Uscript({
-  environment = {}, shims = false
-} = {}) {
+function Uscript ({ environment = {}, shims = false } = {}) {
   this.lexer = new Lexer(rules);
   this.parser = new Parser(grammar, 'Statement');
 
@@ -104,16 +102,14 @@ function Uscript({
   }
 
   if (shims) {
-    const λ = (x) => {
-      return this.eval(x);
-    };
+    const λ = (x) => this.eval(x);
 
     global.λ = λ;
 
     Object.defineProperty(String.prototype, 'µ', {
-      get() { return λ(this); },
+      get () { return λ(this); },
       enumerable: false,
-      configurable: true
+      configurable: true,
     });
   }
 }
@@ -147,7 +143,7 @@ Uscript.prototype.eval = function(script, environment) {
     tokens.push({
       type: 'EOS',
       value: ';',
-      position: script.length
+      position: script.length,
     });
   }
 
@@ -167,7 +163,7 @@ Uscript.prototype.eval = function(script, environment) {
     local.unshift(environment);
   }
 
-  function findFrame(variable) {
+  function findFrame (variable) {
     for (let i = 0; i < local.length; i++) {
       if (local[i].hasOwnProperty(variable)) {
         return local[0];
@@ -176,7 +172,7 @@ Uscript.prototype.eval = function(script, environment) {
     return local[0];
   }
 
-  function lookup(variable, frame) {
+  function lookup (variable, frame) {
     if (frame) {
       return frame[variable];
     }
@@ -189,7 +185,7 @@ Uscript.prototype.eval = function(script, environment) {
     return undefined;
   }
 
-  function resolve(object, frame) {
+  function resolve (object, frame) {
     // "Native" type
     if (object.type === 'INTEGER' || object.type === 'FLOAT' ||
         object.type === 'STRING' || object.type === 'TRUE' ||

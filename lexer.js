@@ -1,13 +1,13 @@
 'use strict';
 
-function Lexer(rules, { ignoreWhitespace = true } = {}) {
+function Lexer (rules, { ignoreWhitespace = true } = {}) {
   this.patterns = [];
 
   for (const item of rules) {
     const pattern = {
       type: item.type || item.name,
       pattern: item.pattern,
-      transform: item.transform
+      transform: item.transform,
     };
 
     if (item.pattern instanceof RegExp) {
@@ -55,7 +55,7 @@ Lexer.prototype.token = function() {
       const result = {
         type: pattern.type,
         value,
-        position: this.position
+        position: this.position,
       };
       this.position += match[0].length;
 

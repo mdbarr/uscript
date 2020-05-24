@@ -8,48 +8,50 @@ describe('Lexer Test', () => {
   let lex;
 
   it('should create a new lexer instance', () => {
-    lex = new Lexer([ {
-      type: 'STRING',
-      pattern: /"[^"]+"/,
-      transform: x => { return x.substring(1, x.length - 1); }
-    }, {
-      type: 'INTEGER',
-      pattern: /\d+/,
-      transform: x => { return parseInt(x, 10); }
-    }, {
-      type: 'FLOAT',
-      pattern: /\d+\.\d+/,
-      transform: x => { return parseFloat(x, 10); }
-    }, {
-      type: 'TRUE',
-      pattern: /true/,
-      transform: () => { return true; }
-    }, {
-      type: 'FALSE',
-      pattern: /false/,
-      transform: () => { return false; }
-    }, {
-      type: 'INCREMENT',
-      pattern: /\+\+/
-    }, {
-      type: 'DECREMENT',
-      pattern: /--/
-    }, {
-      type: 'EQUALITY',
-      pattern: /==/
-    }, {
-      type: 'ASSIGNMENT',
-      pattern: /=/
-    }, {
-      type: 'OPERATOR',
-      pattern: /[+*/-]/
-    }, {
-      type: 'SYMBOL',
-      pattern: /[a-zA-Z]\w*/
-    }, {
-      type: 'EOS',
-      pattern: /(;*$|;)/
-    } ]);
+    lex = new Lexer([
+      {
+        type: 'STRING',
+        pattern: /"[^"]+"/,
+        transform: x => x.substring(1, x.length - 1),
+      }, {
+        type: 'INTEGER',
+        pattern: /\d+/,
+        transform: x => parseInt(x, 10),
+      }, {
+        type: 'FLOAT',
+        pattern: /\d+\.\d+/,
+        transform: x => parseFloat(x, 10),
+      }, {
+        type: 'TRUE',
+        pattern: /true/,
+        transform: () => true,
+      }, {
+        type: 'FALSE',
+        pattern: /false/,
+        transform: () => false,
+      }, {
+        type: 'INCREMENT',
+        pattern: /\+\+/,
+      }, {
+        type: 'DECREMENT',
+        pattern: /--/,
+      }, {
+        type: 'EQUALITY',
+        pattern: /==/,
+      }, {
+        type: 'ASSIGNMENT',
+        pattern: /=/,
+      }, {
+        type: 'OPERATOR',
+        pattern: /[+*/-]/,
+      }, {
+        type: 'SYMBOL',
+        pattern: /[a-zA-Z]\w*/,
+      }, {
+        type: 'EOS',
+        pattern: /(;*$|;)/,
+      },
+    ]);
 
     expect(lex).toBeInstanceOf(Lexer);
   });
