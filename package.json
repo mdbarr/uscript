@@ -9,14 +9,14 @@
   "license": "MIT",
   "private": false,
   "devDependencies": {
-    "eslint": "^7.1.0",
-    "jest": "^26.0.1"
+    "eslint": "^7.6.0",
+    "jest": "^26.2.2"
   },
   "scripts": {
     "lint": "eslint *.js test/*.js",
     "test": "jest"
   },
   "dependencies": {
-    "barrkeep": "^2.6.1"
+    "barrkeep": "^2.6.6"
   }
 }
