@@ -794,10 +794,10 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
   integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
 
-barrkeep@^2.6.6:
-  version "2.6.6"
-  resolved "https://registry.yarnpkg.com/barrkeep/-/barrkeep-2.6.6.tgz#bbac1ed836a938752077938ca298816a72990e25"
-  integrity sha512-Rr3OHsNfPla3zzLedM7wh6HkYoG1fXCidYs0/nkONZCQ8j91Ci2ETZ+a7nMrIy7ijqXjLjWEytjxyaMuGvwLQw==
+barrkeep@^2.11.1:
+  version "2.11.1"
+  resolved "https://registry.yarnpkg.com/barrkeep/-/barrkeep-2.11.1.tgz#a12a1c4c689448cfce65071ed8dc9b1299ea621d"
+  integrity sha512-E12rpsKv/lRkH4G3n4VELTSEJw1Bgbe8z4443OTlba50STMxoduR9t1smJEEX57vaz6RTDRCCyW2bFYlIqQIVw==
 
 base@^0.11.1:
   version "0.11.2"

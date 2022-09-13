@@ -82,6 +82,6 @@ describe('Scripting testing', () => {
   });
 
   it('should evaluate a filter expression', () => {
-    expect('2439673 | bytes'.µ).toBe('2.327 MB');
+    expect('2439673 | bytes'.µ).toBe('2.33 MB');
   });
 });

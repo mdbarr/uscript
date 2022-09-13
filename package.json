@@ -17,6 +17,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "barrkeep": "^2.6.6"
+    "barrkeep": "^2.11.1"
   }
 }
