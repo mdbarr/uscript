@@ -1,6 +1,6 @@
 {
   "name": "@hyperingenuity/uscript",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Micro Scripting Language inside JavaScript",
   "main": "index.js",
   "bin": "./cli.js",
