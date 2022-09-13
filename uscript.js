@@ -1,6 +1,6 @@
 'use strict';
 
-require('barrkeep/pp');
+// require('barrkeep/pp');
 const Lexer = require('./lexer');
 const Parser = require('./parser');
 
